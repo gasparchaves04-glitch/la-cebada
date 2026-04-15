@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>La Cebada</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0e0e0e;
+  color: white;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  padding: 30px 20px 10px;
+  position: relative;
+}
+
+.logo img {
+  height: 80px;
+  filter: brightness(1.2);
+}
+
+/* CARRITO */
+.cart {
+  position: absolute;
+  top: 30px;
+  right: 20px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.cart span {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: white;
+  color: black;
+  border-radius: 50%;
+  font-size: 11px;
+  padding: 3px 6px;
+}
+
+/* PRODUCTO */
+.product {
+  max-width: 500px;
+  margin: auto;
+  padding: 10px;
+}
+
+/* IMAGEN */
+.img-container {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.zoom-container img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.zoom-container:hover img {
+  transform: scale(1.08);
+}
+
+/* BADGE */
+.badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: red;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+/* INFO */
+.info {
+  padding: 25px 10px;
+}
+
+h2 {
+  font-size: 26px;
+  margin: 10px 0;
+}
+
+.price {
+  font-size: 28px;
+  margin: 10px 0 20px;
+  font-weight: bold;
+}
+
+/* BOTONES */
+button {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+}
+
+.buy {
+  background: white;
+  color: black;
+}
+
+.add {
+  background: #1f1f1f;
+  color: white;
+  margin-top: 10px;
+}
+
+/* CARRITO PANEL */
+.cart-panel {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #111;
+  display: none;
+  padding: 20px;
+}
+
+/* LOGIN */
+.login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000ee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background: #1a1a1a;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+/* ADMIN */
+.admin {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="login">
+  <div class="login-box">
+    <h3>Admin</h3>
+    <input type="password" id="pass" placeholder="Contraseña">
+    <button onclick="login()">Entrar</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <img src="logo.png">
+  </div>
+
+  <div class="cart" onclick="toggleCart()">
+    🛒 <span id="count">0</span>
+  </div>
+</div>
+
+<!-- PRODUCTO -->
+<div class="product">
+
+  <div class="img-container">
+    <div id="sinStock" class="badge">SIN STOCK</div>
+
+    <div class="zoom-container">
+      <img src="yerba.jpg" id="productImg">
+    </div>
+  </div>
+
+  <div class="info">
+    <h2>Yerba Baldo 1kg</h2>
+    <div class="price">$10.500</div>
+
+    <button class="buy" onclick="comprar()">Comprar</button>
+    <button class="add" onclick="addCart()">Agregar al carrito</button>
+  </div>
+
+</div>
+
+<!-- CARRITO -->
+<div id="cartPanel" class="cart-panel">
+  <h3>Carrito</h3>
+  <div id="items"></div>
+  <button onclick="finalizarCompra()">Finalizar compra</button>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="admin">
+  <button onclick="activarStock()">Stock ON</button>
+  <button onclick="desactivarStock()">Stock OFF</button>
+</div>
+
+<script>
+let stock = localStorage.getItem("stock") === "true";
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+function login() {
+  let pass = document.getElementById("pass").value;
+  if (pass === "1234") {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("admin").style.display = "block";
+  } else {
+    alert("Incorrecto");
+  }
+}
+
+function actualizarStock() {
+  document.getElementById("sinStock").style.display = stock ? "none" : "block";
+  localStorage.setItem("stock", stock);
+}
+
+function activarStock() {
+  stock = true;
+  actualizarStock();
+}
+
+function desactivarStock() {
+  stock = false;
+  actualizarStock();
+}
+
+function addCart() {
+  if (!stock) return alert("Sin stock");
+  carrito.push("Yerba Baldo 1kg");
+  guardar();
+}
+
+function guardar() {
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+  actualizarCarrito();
+}
+
+function actualizarCarrito() {
+  document.getElementById("count").innerText = carrito.length;
+  let html = "";
+  carrito.forEach(p => html += "<p>" + p + "</p>");
+  document.getElementById("items").innerHTML = html;
+}
+
+function toggleCart() {
+  let c = document.getElementById("cartPanel");
+  c.style.display = c.style.display === "block" ? "none" : "block";
+}
+
+function comprar() {
+  if (!stock) return alert("Sin stock");
+  window.open("https://wa.me/5493364370451?text=Quiero comprar Yerba Baldo 1kg de La Cebada");
+}
+
+function finalizarCompra() {
+  if (carrito.length === 0) return alert("Carrito vacío");
+  let texto = "Quiero comprar: " + carrito.join(", ");
+  window.open("https://wa.me/5493364370451?text=" + encodeURIComponent(texto));
+}
+
+const img = document.getElementById("productImg");
+
+img.addEventListener("touchstart", () => {
+  img.style.transform = "scale(1.2)";
+});
+
+img.addEventListener("touchend", () => {
+  img.style.transform = "scale(1)";
+});
+
+actualizarStock();
+actualizarCarrito();
+</script>
+
+</body>
+</html>
