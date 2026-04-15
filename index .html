@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Cebada</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0e0e0e;
+  color: white;
+  animation: fadeIn 0.8s ease;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  padding: 30px 15px;
+}
+
+.logo img {
+  height: 110px;
+  transition: transform 0.3s;
+}
+
+/* PRODUCTO */
+.product {
+  max-width: 100%;
+  padding: 10px;
+  animation: slideUp 0.7s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* IMAGEN */
+.img-container {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.img-container img {
+  width: 100%;
+  height: 60vh; /* 🔥 adaptable al celular */
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+/* INFO */
+.info {
+  padding: 20px 10px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+.price {
+  font-size: 30px;
+  margin: 10px 0;
+}
+
+/* STOCK */
+.stock-text {
+  font-size: 17px;
+  margin-bottom: 10px;
+}
+
+/* BOTÓN */
+button {
+  width: 100%;
+  padding: 16px;
+  font-size: 17px;
+  border-radius: 12px;
+  border: none;
+  margin-top: 10px;
+  transition: all 0.2s ease;
+}
+
+.buy {
+  background: white;
+  color: black;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* ADMIN */
+.admin {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="logo" onclick="activarAdmin()">
+    <img src="logo.png">
+  </div>
+</div>
+
+<div class="product">
+
+  <div class="img-container">
+    <img src="yerba.jpg" id="img">
+  </div>
+
+  <div class="info">
+    <h2>Yerba Baldo 1kg</h2>
+    <div class="price">$10.500</div>
+
+    <div id="stockTexto" class="stock-text"></div>
+
+    <button class="buy" onclick="comprar()">Comprar</button>
+  </div>
+
+</div>
+
+<div id="admin" class="admin">
+  <button onclick="activarStock()">Stock ON</button>
+  <button onclick="desactivarStock()">Stock OFF</button>
+</div>
+
+<script>
+let stock = localStorage.getItem("stock") === "true";
+
+/* ADMIN SECRETO */
+function activarAdmin() {
+  let pass = prompt("Contraseña admin:");
+  if (pass === "1234") {
+    document.getElementById("admin").style.display = "block";
+  }
+}
+
+/* STOCK */
+function actualizarStock() {
+  const texto = document.getElementById("stockTexto");
+
+  if (stock) {
+    texto.innerText = "Stock disponible";
+    texto.style.color = "lightgreen";
+  } else {
+    texto.innerText = "Sin stock";
+    texto.style.color = "red";
+  }
+
+  localStorage.setItem("stock", stock);
+}
+
+function activarStock() {
+  stock = true;
+  actualizarStock();
+}
+
+function desactivarStock() {
+  stock = false;
+  actualizarStock();
+}
+
+/* COMPRA */
+function comprar() {
+  if (!stock) {
+    alert("Sin stock");
+    return;
+  }
+
+  window.open("https://wa.me/5493364370451?text=Quiero comprar Yerba Baldo 1kg de La Cebada");
+}
+
+/* ZOOM PARA CELULAR (TOUCH) */
+const img = document.getElementById("img");
+
+img.addEventListener("touchstart", () => {
+  img.style.transform = "scale(1.05)";
+});
+
+img.addEventListener("touchend", () => {
+  img.style.transform = "scale(1)";
+});
+
+/* INIT */
+actualizarStock();
+</script>
+
+</body>
+</html>
